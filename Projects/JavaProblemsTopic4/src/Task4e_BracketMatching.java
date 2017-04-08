@@ -14,7 +14,7 @@ public class Task4e_BracketMatching {
         char[] charray = str.toCharArray();
         boolean bracketsMatch = true;
 
-        for (int i = charray.length - 1; i >= 0; i--) {
+        for (int i = charray.length - 2; i >= 0; i--) {
             if (    (charray[i] == '(')  ||  (charray[i] == '[')     ||     (charray[i] == '{')    ) {
                 int j = i + 1;
                 while (charray[j] == '0') {

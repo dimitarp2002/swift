@@ -16,13 +16,11 @@ public class Task3e_LongestIncreasingSubsequence {
         boolean isIncreasing = false;
         int countOfIncrSubseq = 1;
         int maxCountOfIncrSubseq = 0;
-        for (int i = 1; i < arr.length; i++) {
+        for (int i = 1; i < arr.length - 1; i++) {
             if (arr[i] > arr[i - 1]) {
                 isIncreasing = true;
                 countOfIncrSubseq++;
-            }
-
-            if (arr[i] < arr[i - 1]) {
+            } else {
                 if (maxCountOfIncrSubseq < countOfIncrSubseq) {
                     maxCountOfIncrSubseq = countOfIncrSubseq;
                 }
@@ -39,17 +37,13 @@ public class Task3e_LongestIncreasingSubsequence {
             for (int i = 1; i < arr.length; i++) {
                 if (arr[i] > arr[i - 1]) {
                     countOfIncrSubseq++;
-                }
-
-                if (countOfIncrSubseq == maxCountOfIncrSubseq) {
-                    countOfIncrSubseq = 1;
-                    System.out.println("");
-                    for (int j = i - (maxCountOfIncrSubseq - 1); j <= i; j++) {
-                        System.out.print(arr[j]+" ");
+                    if (countOfIncrSubseq == maxCountOfIncrSubseq) {
+                        System.out.println("");
+                        for (int j = i - (maxCountOfIncrSubseq - 1); j <= i; j++) {
+                            System.out.print(arr[j] + " ");
+                        }
                     }
-                }
-
-                if (arr[i] < arr[i - 1]) {
+                } else {
                     countOfIncrSubseq = 1;
                 }
 

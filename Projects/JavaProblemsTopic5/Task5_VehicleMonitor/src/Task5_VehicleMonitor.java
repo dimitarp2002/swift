@@ -40,7 +40,7 @@ public class Task5_VehicleMonitor {
                 } else if (j == 1) {
                     model = split[j].trim();
                 } else if (j == 2) {
-                    power = Integer.parseInt(split[2].trim());
+                    power = Integer.parseInt(split[j].trim());
                 } else if (j == 3) {
                     fuelConsumption = Double.parseDouble(split[j].trim());
                 } else if (j == 4) {

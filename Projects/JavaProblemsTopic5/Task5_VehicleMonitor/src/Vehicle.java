@@ -6,13 +6,15 @@ public class Vehicle {
     String model;
     int power;
     double fuelConsumption;
+    double distance=0;
     int yearProduced;
-    String licenseNo;
+    int licenseNo;
+    
     
     int weight;
     String color;
 
-    public Vehicle(String type, String model, int power, double fuelConsumption, int yearProduced, String licenseNo) {
+    public Vehicle(String type, String model, int power, double fuelConsumption, int yearProduced, int licenseNo) {
         this.type = type;
         this.model = model;
         this.power = power;
@@ -23,7 +25,7 @@ public class Vehicle {
         this.color="N/A";
     }
 
-    public Vehicle(String type, String model, int power, double fuelConsumption, int yearProduced, String licenseNo, int weight) {
+    public Vehicle(String type, String model, int power, double fuelConsumption, int yearProduced, int licenseNo, int weight) {
         this.type = type;
         this.model = model;
         this.power = power;
@@ -34,7 +36,7 @@ public class Vehicle {
         this.color="N/A";
     }
 
-    public Vehicle(String type, String model, int power, double fuelConsumption, int yearProduced, String licenseNo, String color) {
+    public Vehicle(String type, String model, int power, double fuelConsumption, int yearProduced, int licenseNo, String color) {
         this.type = type;
         this.model = model;
         this.power = power;
@@ -45,7 +47,7 @@ public class Vehicle {
         this.weight = 0;
     }
 
-    public Vehicle(String type, String model, int power, double fuelConsumption, int yearProduced, String licenseNo, int weight, String color) {
+    public Vehicle(String type, String model, int power, double fuelConsumption, int yearProduced, int licenseNo, int weight, String color) {
         this.type = type;
         this.model = model;
         this.power = power;
@@ -56,18 +58,18 @@ public class Vehicle {
         this.color = color;
     }
 
-    public String getLicenseNo() {
+    public int getLicenseNo() {
         return licenseNo;
     }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
     
     
     
-    
-    
-    
-    
-    double calculateTripPrice(double fuelPrice, double distance){
-    return fuelPrice*distance*(this.fuelConsumption/100);
+    double calculateTripPrice(double fuelPrice){
+    return fuelPrice*this.distance*(this.fuelConsumption/100.0);
     }
     
     
@@ -88,7 +90,7 @@ public class Vehicle {
     
     
     void printInfo(){
-        System.out.printf("%s - %s, %d , %s %n", this.licenseNo, this.model, this.yearProduced, this.color);
+        System.out.printf("%04d - %s, %d , %s %n", this.licenseNo, this.model, this.yearProduced, this.color);
     
     }
 }

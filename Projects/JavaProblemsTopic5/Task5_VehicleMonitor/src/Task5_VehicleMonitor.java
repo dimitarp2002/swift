@@ -4,14 +4,7 @@ import java.util.Scanner;
 
 public class Task5_VehicleMonitor {
 
-    public static String generateLicense() {
-        Random rn = new Random();
-        String licenseN = "";
-        for (int j = 0; j < 4; j++) {
-            licenseN += rn.nextInt(10);
-        }
-        return licenseN;
-    }
+
 
 
     public static void main(String[] args) {
@@ -20,8 +13,9 @@ public class Task5_VehicleMonitor {
         String model = "";
         int power = 0;
         double fuelConsumption = 0;
+        double fuelPrice = 0;
         int yearProduced = 0;
-        String licenseNo = "";
+        int licenseNo = 0;
 
         double distance = 0;
 
@@ -31,7 +25,7 @@ public class Task5_VehicleMonitor {
         Scanner sc = new Scanner(System.in);
         System.out.println("Please enter two digits:  ");
         int number = sc.nextInt();
-        fuelConsumption = sc.nextDouble();
+        fuelPrice = sc.nextDouble();
         sc.nextLine();
         Vehicle vehicles[] = new Vehicle[number];
         String licenses[] = new String[number];
@@ -76,13 +70,8 @@ public class Task5_VehicleMonitor {
                 }
             }
 
-            licenseNo = generateLicense();
-            for (int j = i - 1; j >= 0; j--) {
-                if (vehicles[j].getLicenseNo() == licenseNo) {
-                    licenseNo = generateLicense();
-                    j = i;
-                }
-            }
+            licenseNo = i;
+            
 
             if (weight == -1 && color == "") {
                 vehicles[i] = new Vehicle(type, model, power, fuelConsumption, yearProduced, licenseNo);
@@ -93,11 +82,14 @@ public class Task5_VehicleMonitor {
             } else {
                 vehicles[i] = new Vehicle(type, model, power, fuelConsumption, yearProduced, licenseNo, weight, color);
             }
+            vehicles[i].setDistance(distance);
         }
 
         System.out.println("");
         for (int i=0;i<vehicles.length;i++){
                 vehicles[i].printInfo();
+                System.out.printf("Insurance cost: %.2f - Тravel cost: %.2f %n",vehicles[i].getInsurancePrice(),vehicles[i].calculateTripPrice(fuelPrice));
+                //System.out.println(vehicles[i].calculateTripPrice(fuelPrice, distance));
         }
         
         

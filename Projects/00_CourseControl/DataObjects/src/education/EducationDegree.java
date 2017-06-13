@@ -1,6 +1,7 @@
 package education;
 
 public enum EducationDegree {
+    None(0),
     Primary(1), 
     Secondary(2),
     Bachelor(3), 

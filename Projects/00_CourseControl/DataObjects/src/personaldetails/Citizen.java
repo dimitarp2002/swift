@@ -23,6 +23,7 @@ public final class Citizen {
     private LocalDate _dateOfBirth;
 
     private Address _address;
+    private List<Address> _old_addresses;
     private List<Education> _educations;
     private List<SocialInsuranceRecord> _socialInsuranceRecords;
 
@@ -43,6 +44,7 @@ public final class Citizen {
         _dateOfBirth = dateOfBirth;
 
         _educations = new ArrayList<>();
+        _old_addresses = new ArrayList<>();
         _socialInsuranceRecords = new ArrayList<>();
     }
 
@@ -156,7 +158,12 @@ public final class Citizen {
         if (address == null) {
             throw new IllegalArgumentException("Address expected.");
         }
+        if(! (_address==null)){
+            _old_addresses.add(_address);
+        }
         _address = address;
+        
+        
     }
 
     public LocalDate getDateOfBirth() {

@@ -27,4 +27,10 @@ public abstract class GradedEducation extends Education{
         
         this.finalGrade = finalGrade;
     }
+
+    public void setFinalGrade(float finalGrade) {
+        this.finalGrade = finalGrade;
+    }
+    
+    
 }

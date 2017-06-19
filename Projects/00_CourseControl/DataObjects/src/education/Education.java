@@ -14,7 +14,7 @@ public abstract class Education{
     Education(String institution, LocalDate enrollmentDate, LocalDate graduationDate) {
         this.institutionName = institution;
         this.enrollmentDate = enrollmentDate;
-        this.graduationDate = graduationDate;
+        this.setGraduationDate(graduationDate);
     }
 
     public boolean isGraduated() {
@@ -28,8 +28,10 @@ public abstract class Education{
     public LocalDate getGraduationDate() {
         return graduationDate;
     }
+    
+    
 
-    public void setGraduationDate(LocalDate graduationDate) {
+    public final void setGraduationDate(LocalDate graduationDate) {
         if (graduationDate == null || graduationDate.isBefore(enrollmentDate)) {
             throw new IllegalArgumentException("Graduation date is expected to be after enrollment date.");
         }
@@ -47,4 +49,9 @@ public abstract class Education{
 
         graduated = true;
     }
+
+    public void setGraduated(boolean graduated) {
+        this.graduated = graduated;
+    }
+    
 }

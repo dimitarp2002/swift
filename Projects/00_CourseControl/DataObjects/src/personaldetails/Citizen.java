@@ -2,6 +2,7 @@ package personaldetails;
 
 import address.Address;
 import education.Education;
+import education.EducationDegree;
 import education.GradedEducation;
 import insurance.SocialInsuranceRecord;
 import java.time.LocalDate;
@@ -56,51 +57,58 @@ public final class Citizen {
         return getAge() < 18;
     }
 
-    @Override
-    public String toString() {
 
-        String heOrShe;
-        String hisOrHer;
 
-        if (_gender == Gender.Male) {
-            heOrShe = "He";
-            hisOrHer = "His";
-        } else {
-            heOrShe = "She";
-            hisOrHer = "Her";
-        }
-
-        String result = String.format("%s %s %s is %d years old.", _firstName, _middleName, _lastName, getAge());
-        result += String.format(" %s was born in %d.%n", heOrShe, _dateOfBirth.getYear());
-
-        if (isUnderAged()) {
-            result += String.format("%s %s %s is under-aged.%n", _firstName, _middleName, _lastName);
-        }
-
-        if (this._address != null) {
-            result += String.format("%s lives at:%n%s", heOrShe, _address);
-        }
-
-        for (Education education : _educations) {
-            result += String.format("%n%s started %s degree in %s on %s",
-                    heOrShe, education.getDegree().toString().toLowerCase(),
-                    education.getInstitutionName(), education.getEnrollmentDate());
-
-            if (education.isGraduated()) {
-
-                result += String.format(" and finished on %s.", education.getGraduationDate());
-
-                if (education instanceof GradedEducation) {
-                    result += String.format(" %s grade was %.3f.", hisOrHer, ((GradedEducation) education).getFinalGrade());
-                }
-
-            } else {
-                result += String.format(" and is supposed to graduate on %s.", education.getGraduationDate());
-            }
-        }
-
-        return result;
-    }
+        
+         public void printPerson() {
+        System.out.println(this.getFirstName() +" " + this.getMiddleName() + " " 
+                    + this.getLastName() + " " + this.getDateOfBirth() + " " + this.getGender() + 
+                    " " + this.getHeight()    );
+         }
+//            @Override
+//    public String toString() {
+//        String heOrShe;
+//        String hisOrHer;
+//
+//        if (_gender == Gender.Male) {
+//            heOrShe = "He";
+//            hisOrHer = "His";
+//        } else {
+//            heOrShe = "She";
+//            hisOrHer = "Her";
+//        }
+//
+//        String result = String.format("%s %s %s is %d years old.", _firstName, _middleName, _lastName, getAge());
+//        result += String.format(" %s was born in %d.%n", heOrShe, _dateOfBirth.getYear());
+//
+//        if (isUnderAged()) {
+//            result += String.format("%s %s %s is under-aged.%n", _firstName, _middleName, _lastName);
+//        }
+//
+//        if (this._address != null) {
+//            result += String.format("%s lives at:%n%s", heOrShe, _address);
+//        }
+//
+//        for (Education education : _educations) {
+//            result += String.format("%n%s started %s degree in %s on %s",
+//                    heOrShe, education.getDegree().toString().toLowerCase(),
+//                    education.getInstitutionName(), education.getEnrollmentDate());
+//
+//            if (education.isGraduated()) {
+//
+//                result += String.format(" and finished on %s.", education.getGraduationDate());
+//
+//                if (education instanceof GradedEducation) {
+//                    result += String.format(" %s grade was %.3f.", hisOrHer, ((GradedEducation) education).getFinalGrade());
+//                }
+//
+//            } else {
+//                result += String.format(" and is supposed to graduate on %s.", education.getGraduationDate());
+//            }
+//        }
+//
+//        return result;
+//    }
 
     // Accessors
     public String getFirstName() {
@@ -166,6 +174,12 @@ public final class Citizen {
         
     }
 
+    public List<Address> getOld_addresses() {
+        return _old_addresses;
+    }
+    
+    
+
     public LocalDate getDateOfBirth() {
         return _dateOfBirth;
     }
@@ -196,4 +210,33 @@ public final class Citizen {
     public void addSocialInsuranceRecord(SocialInsuranceRecord record) {
         _socialInsuranceRecords.add(record);
     }
+    //Iztrij :
+    public void printEducations() {
+        if (_educations != null){
+            for (Education education : _educations){
+                System.out.print(education.getInstitutionName() + " " + education.getEnrollmentDate()
+                + " " + education.getGraduationDate() + " " + education.isGraduated() + " " + education.getDegree() + " "
+                );
+                 if(education.getDegree() == EducationDegree.Master 
+                || education.getDegree() == EducationDegree.Bachelor 
+                || education.getDegree() == EducationDegree.Doctorate
+                || education.getDegree() == EducationDegree.Secondary) {
+                System.out.println(((GradedEducation)education).getFinalGrade());
+            }else {
+                     System.out.println("");
+                 }
+            }
+        }
+    }
+    
+    public void printSrRecords() {
+        if(_socialInsuranceRecords!=null){
+            for(SocialInsuranceRecord siRecord : _socialInsuranceRecords){
+            System.out.println(siRecord.getYear() + " " + siRecord.getMonth()+" " + siRecord.getAmount()  );
+            }
+        }
+    
+    }
+    
+    
 }

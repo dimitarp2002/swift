@@ -24,7 +24,6 @@ public final class Citizen {
     private LocalDate _dateOfBirth;
 
     private Address _address;
-    private List<Address> _old_addresses;
     private List<Education> _educations;
     private List<SocialInsuranceRecord> _socialInsuranceRecords;
 
@@ -45,7 +44,6 @@ public final class Citizen {
         _dateOfBirth = dateOfBirth;
 
         _educations = new ArrayList<>();
-        _old_addresses = new ArrayList<>();
         _socialInsuranceRecords = new ArrayList<>();
     }
 
@@ -57,16 +55,9 @@ public final class Citizen {
         return getAge() < 18;
     }
 
-
-
-        
-         public void printPerson() {
-        System.out.println(this.getFirstName() +" " + this.getMiddleName() + " " 
-                    + this.getLastName() + " " + this.getDateOfBirth() + " " + this.getGender() + 
-                    " " + this.getHeight()    );
-         }
-//            @Override
+//    @Override
 //    public String toString() {
+//
 //        String heOrShe;
 //        String hisOrHer;
 //
@@ -109,7 +100,6 @@ public final class Citizen {
 //
 //        return result;
 //    }
-
     // Accessors
     public String getFirstName() {
         return _firstName;
@@ -166,19 +156,8 @@ public final class Citizen {
         if (address == null) {
             throw new IllegalArgumentException("Address expected.");
         }
-        if(! (_address==null)){
-            _old_addresses.add(_address);
-        }
         _address = address;
-        
-        
     }
-
-    public List<Address> getOld_addresses() {
-        return _old_addresses;
-    }
-    
-    
 
     public LocalDate getDateOfBirth() {
         return _dateOfBirth;
@@ -210,33 +189,37 @@ public final class Citizen {
     public void addSocialInsuranceRecord(SocialInsuranceRecord record) {
         _socialInsuranceRecords.add(record);
     }
-    //Iztrij :
+
+    public void printPerson() {
+        System.out.println(this.getFirstName() + " " + this.getMiddleName() + " "
+                + this.getLastName() + " " + this.getDateOfBirth() + " " + this.getGender()
+                + " " + this.getHeight());
+    }
+
     public void printEducations() {
-        if (_educations != null){
-            for (Education education : _educations){
+        if (_educations != null) {
+            for (Education education : _educations) {
                 System.out.print(education.getInstitutionName() + " " + education.getEnrollmentDate()
-                + " " + education.getGraduationDate() + " " + education.isGraduated() + " " + education.getDegree() + " "
+                        + " " + education.getGraduationDate() + " " + education.isGraduated() + " " + education.getDegree() + " "
                 );
-                 if(education.getDegree() == EducationDegree.Master 
-                || education.getDegree() == EducationDegree.Bachelor 
-                || education.getDegree() == EducationDegree.Doctorate
-                || education.getDegree() == EducationDegree.Secondary) {
-                System.out.println(((GradedEducation)education).getFinalGrade());
-            }else {
-                     System.out.println("");
-                 }
+                if (education.getDegree() == EducationDegree.Master
+                        || education.getDegree() == EducationDegree.Bachelor
+                        || education.getDegree() == EducationDegree.Doctorate
+                        || education.getDegree() == EducationDegree.Secondary) {
+                    System.out.println(((GradedEducation) education).getFinalGrade());
+                } else {
+                    System.out.println("");
+                }
             }
         }
     }
-    
+
     public void printSrRecords() {
-        if(_socialInsuranceRecords!=null){
-            for(SocialInsuranceRecord siRecord : _socialInsuranceRecords){
-            System.out.println(siRecord.getYear() + " " + siRecord.getMonth()+" " + siRecord.getAmount()  );
+        if (_socialInsuranceRecords != null) {
+            for (SocialInsuranceRecord siRecord : _socialInsuranceRecords) {
+                System.out.println(siRecord.getYear() + " " + siRecord.getMonth() + " " + siRecord.getAmount());
             }
         }
-    
     }
-    
-    
+
 }

@@ -23,14 +23,9 @@ public abstract class GradedEducation extends Education{
             throw new IllegalArgumentException("Graduation grade is expected to be between 2 and 6.");
         }
         
-        gotGraduated(); 
+        gotGraduated();
         
         this.finalGrade = finalGrade;
+        
     }
-
-    public void setFinalGrade(float finalGrade) {
-        this.finalGrade = finalGrade;
-    }
-    
-    
 }

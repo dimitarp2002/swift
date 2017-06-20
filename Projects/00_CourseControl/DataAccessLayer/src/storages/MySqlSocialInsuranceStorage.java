@@ -1,6 +1,7 @@
 package storages;
 
 import insurance.SocialInsuranceRecord;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -22,14 +23,31 @@ public class MySqlSocialInsuranceStorage implements SocialInsuranceStorage {
         this.password = password;
     }
 
-    /**
-     *
-     * @param record
-     * @param citizenId
-     */
     @Override
     public void insert(SocialInsuranceRecord record, int citizenId) throws DALException {
+try (Connection con = DriverManager.getConnection(url, username, password);
+                CallableStatement statement = con.prepareCall("{call `sp_insert_sriRecord`(?, ?, ?, ? )}")) {
 
+            statement.setInt("p_year", record.getYear());
+            statement.setInt("p_month", record.getMonth());
+            statement.setDouble("p_amount", record.getAmount());
+            statement.setInt("p_citizen_id", citizenId);
+
+            statement.executeQuery();
+
+        } catch (SQLException ex) {
+
+            // SQLException is actually a linked list of Exceptions
+            while (ex != null) {
+                System.out.println(ex.getSQLState());
+                System.out.println(ex.getMessage());
+                System.out.println(ex.getErrorCode());
+                ex = ex.getNextException();
+            }
+            throw new DALException("Unsuccessful insertion", ex);
+
+        }
+        
     }
 
     @Override
@@ -41,26 +59,49 @@ public class MySqlSocialInsuranceStorage implements SocialInsuranceStorage {
                 + "WHERE citizen_id = ? "
                 + "ORDER BY year DESC, month DESC;";
 
-        try ( Connection conn = DriverManager.getConnection( url, username, password );
-                PreparedStatement stmt = conn.prepareStatement( query ) ) {
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt( 1, citizenId );
+            stmt.setInt(1, citizenId);
 
-            try ( ResultSet rs = stmt.executeQuery() ) {
+            try (ResultSet rs = stmt.executeQuery()) {
 
-                while ( rs.next() ) {
+                while (rs.next()) {
 
-                    int year = rs.getInt( "year" );
-                    int month = rs.getInt( "month" );
-                    double amount = rs.getDouble( "amount" );
+                    int year = rs.getInt("year");
+                    int month = rs.getInt("month");
+                    double amount = rs.getDouble("amount");
 
-                    result.add( new SocialInsuranceRecord( year, month, amount ) );
+                    result.add(new SocialInsuranceRecord(year, month, amount));
                 }
             }
-        } catch ( SQLException ex ) {
-            throw new DALException( "Unable to get social insurance records for citizen with Id = " 
-                    + citizenId, ex );
+        } catch (SQLException ex) {
+            throw new DALException("Unable to get social insurance records for citizen with Id = "
+                    + citizenId, ex);
         }
         return result;
+    }
+
+    @Override
+    public void truncateSocialInsTable() throws DALException {
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                CallableStatement statement = con.prepareCall("{call sp_truncate_table(? )}")) {
+            statement.setString(1, "SocialInsuransRecords");
+            statement.executeQuery();
+
+        } catch (SQLException ex) {
+
+            // SQLException is actually a linked list of Exceptions
+            while (ex != null) {
+                System.out.println(ex.getSQLState());
+                System.out.println(ex.getMessage());
+                System.out.println(ex.getErrorCode());
+                ex = ex.getNextException();
+            }
+            throw new DALException("Unsuccessful truncation", ex);
+
+        }
+
     }
 }

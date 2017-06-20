@@ -9,4 +9,5 @@ public interface SocialInsuranceStorage {
 
     List<SocialInsuranceRecord> getSocialInsuranceById(int citizenId) throws DALException;
 
+    public void truncateSocialInsTable() throws DALException;
 }

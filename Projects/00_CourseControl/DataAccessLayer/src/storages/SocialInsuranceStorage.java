@@ -10,4 +10,6 @@ public interface SocialInsuranceStorage {
     List<SocialInsuranceRecord> getSocialInsuranceById(int citizenId) throws DALException;
 
     public void truncateSocialInsTable() throws DALException;
+    public void Bulkinsert(String filename) throws DALException;
+    public void insert(List<SocialInsuranceRecord> records, int citizenId) throws DALException;
 }

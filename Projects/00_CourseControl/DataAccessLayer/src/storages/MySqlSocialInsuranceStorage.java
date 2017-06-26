@@ -16,17 +16,20 @@ public class MySqlSocialInsuranceStorage implements SocialInsuranceStorage {
     private final String url;
     private final String username;
     private final String password;
-
-    public MySqlSocialInsuranceStorage(String url, String username, String password) {
+    Connection con;
+    CallableStatement statement;        
+    
+    public MySqlSocialInsuranceStorage(String url, String username, String password) throws SQLException {
         this.url = url;
         this.username = username;
         this.password = password;
+        con = DriverManager.getConnection(url, username, password);
+        statement = con.prepareCall("{call `sp_insert_sriRecord`(?, ?, ?, ? )}");
     }
 
     @Override
     public void insert(SocialInsuranceRecord record, int citizenId) throws DALException {
-try (Connection con = DriverManager.getConnection(url, username, password);
-                CallableStatement statement = con.prepareCall("{call `sp_insert_sriRecord`(?, ?, ?, ? )}")) {
+try  {
 
             statement.setInt("p_year", record.getYear());
             statement.setInt("p_month", record.getMonth());
@@ -85,10 +88,10 @@ try (Connection con = DriverManager.getConnection(url, username, password);
     @Override
     public void truncateSocialInsTable() throws DALException {
 
-        try (Connection con = DriverManager.getConnection(url, username, password);
-                CallableStatement statement = con.prepareCall("{call sp_truncate_table(? )}")) {
-            statement.setString(1, "SocialInsuransRecords");
-            statement.executeQuery();
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+                CallableStatement statementt = conn.prepareCall("{call sp_truncate_table(? )}")) {
+            statementt.setString(1, "SocialInsuransRecords");
+            statementt.executeQuery();
 
         } catch (SQLException ex) {
 
@@ -104,4 +107,51 @@ try (Connection con = DriverManager.getConnection(url, username, password);
         }
 
     }
+    
+    
+            public void Bulkinsert(String filename) throws DALException {
+    
+    try (Connection conn = DriverManager.getConnection(url, username, password);
+                Statement statementt = conn.createStatement();
+                ) {
+//                statement.executeUpdate( "LOAD DATA LOCAL INFILE '/home/username/avail30trplog' INTO TABLE  logname.log FIELDS TERMINATED BY ' ' LINES TERMINATED BY '\\n'");
+                Integer result = statementt.executeUpdate(
+                        "LOAD DATA LOCAL INFILE "
+                        + "'"
+                        + filename
+                        + "'"
+                        + "INTO TABLE  SocialInsuransRecords FIELDS TERMINATED BY ';' LINES TERMINATED BY '\n'"
+                        );
+    
+    }catch (SQLException ex) {
+
+            // SQLException is actually a linked list of Exceptions
+            while (ex != null) {
+                System.out.println(ex.getSQLState());
+                System.out.println(ex.getMessage());
+                System.out.println(ex.getErrorCode());
+                ex = ex.getNextException();
+            }
+            throw new DALException("Unable to insert Citizen", ex);
+        }
+    
+    }
+            
+            
+            @Override
+    public void insert(List<SocialInsuranceRecord> records, int citizenId) throws DALException {
+        try {
+            Statement statement = con.createStatement();
+            StringBuilder query = new StringBuilder().append("INSERT INTO SocialInsuransRecords (year, month, amount, citizen_id) VALUES ");
+            for (SocialInsuranceRecord record : records) {
+                query.append("\n(" + record.getYear() +  ", " + record.getMonth() + ", " + record.getAmount() + ", " + citizenId + "), ");
+            }
+            query.setCharAt(query.lastIndexOf(","), ';');
+            statement.execute(query.toString());
+        } catch (SQLException e) {
+            throw new DALException("Unable to insert Citizen",e);
+        }
+    }
+    
+    
 }

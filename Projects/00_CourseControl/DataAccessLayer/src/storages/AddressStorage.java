@@ -11,5 +11,6 @@ public interface AddressStorage {
     List<Address> getAddressById(int citizenId) throws DALException;
 
     public void truncateAddressTable() throws DALException;
+     public void Bulkinsert(String filename) throws DALException;
     
 }

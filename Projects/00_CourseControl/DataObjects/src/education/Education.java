@@ -42,8 +42,8 @@ public abstract class Education{
 
     void gotGraduated() {
         if (graduationDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Graduation date is expected to be a date in the past.");
-//            graduated = false;
+//            throw new IllegalArgumentException("Graduation date is expected to be a date in the past.");
+            graduated = false;
         }
 
         graduated = true;

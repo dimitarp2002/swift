@@ -19,19 +19,18 @@ public class MySqlAddressStorage implements AddressStorage {
     private final String url;
     private final String username;
     private final String password;
-    Connection con;
+    
 
     public MySqlAddressStorage(String url, String username, String password) throws SQLException {
         this.url = url;
         this.username = username;
         this.password = password;
-        con = DriverManager.getConnection(url, username, password);
-        
     }
 
     @Override
     public void insert(Address address, int citizenId) throws DALException {
-        try (CallableStatement statement = con.prepareCall("{call `sp_insert_address`(?, ?, ?, ?, ?, ?, ?, ?, ? )}")) {
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                CallableStatement statement = con.prepareCall("{call `sp_insert_address`(?, ?, ?, ?, ?, ?, ?, ?, ? )}")) {
 
             statement.setString("p_country", address.getCountry());
             statement.setString("p_city", address.getCity());
@@ -74,7 +73,8 @@ public class MySqlAddressStorage implements AddressStorage {
         Address result=null;
         String query = "SELECT * FROM Addresses "
                 + "WHERE id = ?;";
-                try ( PreparedStatement stmt = con.prepareStatement(query)) {
+                try ( Connection con = DriverManager.getConnection(url, username, password);
+                        PreparedStatement stmt = con.prepareStatement(query)) {
 
             stmt.setInt(1, citizenId);
 
@@ -108,7 +108,8 @@ public class MySqlAddressStorage implements AddressStorage {
 
     @Override
     public void truncateAddressTable() throws DALException {
-        try (CallableStatement statementt = con.prepareCall("{call sp_truncate_table(? )}")) {
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                CallableStatement statementt = con.prepareCall("{call sp_truncate_table(? )}")) {
             statementt.setString(1, "Addresses");
             statementt.executeQuery();
 
@@ -130,8 +131,8 @@ public class MySqlAddressStorage implements AddressStorage {
     @Override
         public void Bulkinsert(String filename) throws DALException {
     
-    try (  Statement statement = con.createStatement();
-                ) {
+    try (  Connection con = DriverManager.getConnection(url, username, password);
+            Statement statement = con.createStatement();  ) {
 //                statement.executeUpdate( "LOAD DATA LOCAL INFILE '/home/username/avail30trplog' INTO TABLE  logname.log FIELDS TERMINATED BY ' ' LINES TERMINATED BY '\\n'");
                 Integer result = statement.executeUpdate(
                         "LOAD DATA LOCAL INFILE "

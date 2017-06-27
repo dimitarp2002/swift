@@ -24,21 +24,20 @@ public class MySqlEducationStorage implements EducationStorage {
     private final String url;
     private final String username;
     private final String password;
-    Connection con;
-//    CallableStatement statement;
+ 
 
     public MySqlEducationStorage(String url, String username, String password) throws SQLException {
         this.url = url;
         this.username = username;
         this.password = password;
         
-        con = DriverManager.getConnection(url, username, password);
-//        statement = con.prepareCall("{call `sp_insert_education`(?, ?, ?, ?, ?, ?, ? )}");
+        
     }
 
     @Override
     public void truncateEducationTable() throws DALException {
-        try (CallableStatement statementt = con.prepareCall("{call sp_truncate_table(? )}")) {
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                CallableStatement statementt = con.prepareCall("{call sp_truncate_table(? )}")) {
             statementt.setString(1, "Education");
             statementt.executeQuery();
         } catch (SQLException ex) {
@@ -58,7 +57,8 @@ public class MySqlEducationStorage implements EducationStorage {
     @Override
     public void insert(Education education, int citizenId) throws DALException {
 
-        try (CallableStatement statement = con.prepareCall("{call `sp_insert_education`(?, ?, ?, ?, ?, ?, ? )}")) {
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                CallableStatement statement = con.prepareCall("{call `sp_insert_education`(?, ?, ?, ?, ?, ?, ? )}")) {
 
             statement.setString("p_institutionName", education.getInstitutionName());
             statement.setDate("p_enrollmentDate", Date.valueOf(education.getEnrollmentDate()));
@@ -95,7 +95,7 @@ public class MySqlEducationStorage implements EducationStorage {
                 + "WHERE citizen_id = ? "
                 + "ORDER BY `graduationDate` DESC ";
 
-        try (
+        try (Connection con = DriverManager.getConnection(url, username, password);
                 PreparedStatement stmt = con.prepareStatement(query)) {
 
             stmt.setInt(1, citizenId);
@@ -168,7 +168,8 @@ public class MySqlEducationStorage implements EducationStorage {
     @Override
     public void Bulkinsert(String filename) throws DALException {
 
-        try (Statement statement = con.createStatement();) {
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                Statement statement = con.createStatement();) {
             Integer result = statement.executeUpdate(
                     "LOAD DATA LOCAL INFILE "
                     + "'"
@@ -193,9 +194,10 @@ public class MySqlEducationStorage implements EducationStorage {
 
     @Override
     public void insert(List<Education> educations, int citizenId) throws DALException {
-        try {
+        try (Connection con = DriverManager.getConnection(url, username, password);
+                Statement statement = con.createStatement();) {
             if(!(educations.isEmpty())){
-            Statement statement = con.createStatement();
+            
             StringBuilder query = new StringBuilder().append(" INSERT INTO `Education` ( `institutionName`, `enrollmentDate`, `graduationDate`, `degree`, `graduaded`,  `grade`, `citizen_id`)  VALUES ");
             for (int i=0; i<educations.size();i++) {
                 int isGraduated;

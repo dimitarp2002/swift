@@ -19,8 +19,7 @@ public class MySqlCitizenStorage implements CitizenStorage {
     private final String url;
     private final String username;
     private final String password;
-    Connection con;
-//    CallableStatement statement;
+    
     
      
 
@@ -28,13 +27,13 @@ public class MySqlCitizenStorage implements CitizenStorage {
         this.url = url;
         this.username = username;
         this.password = password;
-        con = DriverManager.getConnection(this.url, this.username, this.password);
-//        statement = con.prepareCall("{call sp_insert_citizen(?, ?, ?, ?, ?, ?, ?)}");
+
     }
     
     @Override
         public void truncateCitizenTable() throws DALException {
-        try ( CallableStatement statement = con.prepareCall("{call sp_truncate_table(? )}")) {
+        try ( Connection con = DriverManager.getConnection(this.url, this.username, this.password);
+                CallableStatement statement = con.prepareCall("{call sp_truncate_table(? )}")) {
             statement.setString(1, "Citizen");
             statement.executeQuery();
 
@@ -62,7 +61,8 @@ public class MySqlCitizenStorage implements CitizenStorage {
         String query = "SELECT * FROM Citizen "
                 + "WHERE id = ?;";
 
-        try ( PreparedStatement stmt = con.prepareStatement(query)) {
+        try ( Connection con = DriverManager.getConnection(this.url, this.username, this.password);
+                PreparedStatement stmt = con.prepareStatement(query)) {
 
             stmt.setInt(1, citizenId);
 
@@ -97,8 +97,9 @@ public class MySqlCitizenStorage implements CitizenStorage {
 
     @Override
     public int insert(Citizen person) throws DALException {
-        try  {
-            CallableStatement statement = con.prepareCall("{call sp_insert_citizen(?, ?, ?, ?, ?, ?, ?)}");
+        try (Connection con = DriverManager.getConnection(this.url, this.username, this.password);
+                CallableStatement statement = con.prepareCall("{call sp_insert_citizen(?, ?, ?, ?, ?, ?, ?)}")) {
+            
             statement.setString("p_firstName", person.getFirstName());
             statement.setString("p_middleName", person.getMiddleName());
             statement.setString("p_lastName", person.getLastName());
@@ -129,7 +130,8 @@ public class MySqlCitizenStorage implements CitizenStorage {
     @Override
     public void Bulkinsert(String filename) throws DALException {
     
-    try (Statement statement = con.createStatement(); ) {
+    try (Connection con = DriverManager.getConnection(this.url, this.username, this.password);
+            Statement statement = con.createStatement() ) {
 //                statement.executeUpdate( "LOAD DATA LOCAL INFILE '/home/username/avail30trplog' INTO TABLE  logname.log FIELDS TERMINATED BY ' ' LINES TERMINATED BY '\\n'");
                 Integer result = statement.executeUpdate(
                         "LOAD DATA LOCAL INFILE "
@@ -156,8 +158,9 @@ public class MySqlCitizenStorage implements CitizenStorage {
     
     @Override
     public void insert(List<Citizen> citizens) throws DALException {
-         try {
-            Statement statement = con.createStatement();
+         try (Connection con = DriverManager.getConnection(this.url, this.username, this.password);
+                Statement statement = con.createStatement(); ){
+            
             StringBuilder query = new StringBuilder().append("INSERT INTO Citizen (id, firstName, middleName, lastName, gender, height, dateOfBirth) VALUES ");
             for (int i=0; i<citizens.size();i++) {
                 query.append("\n("+ (i+1) + ", '"+ citizens.get(i).getFirstName() +  "', '" + citizens.get(i).getMiddleName() + "', '" + citizens.get(i).getLastName() + "', '"+citizens.get(i).getGender() + "', " + citizens.get(i).getHeight() + ", '"+citizens.get(i).getDateOfBirth() + "' ), ");

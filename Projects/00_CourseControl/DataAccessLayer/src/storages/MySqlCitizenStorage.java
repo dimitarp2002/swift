@@ -32,6 +32,7 @@ public class MySqlCitizenStorage implements CitizenStorage {
 //        statement = con.prepareCall("{call sp_insert_citizen(?, ?, ?, ?, ?, ?, ?)}");
     }
     
+    @Override
         public void truncateCitizenTable() throws DALException {
         try ( CallableStatement statement = con.prepareCall("{call sp_truncate_table(? )}")) {
             statement.setString(1, "Citizen");
@@ -125,11 +126,10 @@ public class MySqlCitizenStorage implements CitizenStorage {
     }
     
     
+    @Override
     public void Bulkinsert(String filename) throws DALException {
     
-    try (Connection con = DriverManager.getConnection(url, username, password);
-                Statement statement = con.createStatement();
-                ) {
+    try (Statement statement = con.createStatement(); ) {
 //                statement.executeUpdate( "LOAD DATA LOCAL INFILE '/home/username/avail30trplog' INTO TABLE  logname.log FIELDS TERMINATED BY ' ' LINES TERMINATED BY '\\n'");
                 Integer result = statement.executeUpdate(
                         "LOAD DATA LOCAL INFILE "

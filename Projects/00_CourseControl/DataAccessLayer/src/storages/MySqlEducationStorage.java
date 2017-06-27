@@ -31,6 +31,7 @@ public class MySqlEducationStorage implements EducationStorage {
         this.url = url;
         this.username = username;
         this.password = password;
+        
         con = DriverManager.getConnection(url, username, password);
 //        statement = con.prepareCall("{call `sp_insert_education`(?, ?, ?, ?, ?, ?, ? )}");
     }
@@ -94,8 +95,8 @@ public class MySqlEducationStorage implements EducationStorage {
                 + "WHERE citizen_id = ? "
                 + "ORDER BY `graduationDate` DESC ";
 
-        try (Connection conn = DriverManager.getConnection(url, username, password);
-                PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (
+                PreparedStatement stmt = con.prepareStatement(query)) {
 
             stmt.setInt(1, citizenId);
 
@@ -164,6 +165,7 @@ public class MySqlEducationStorage implements EducationStorage {
         return result;
     }
 
+    @Override
     public void Bulkinsert(String filename) throws DALException {
 
         try (Statement statement = con.createStatement();) {
@@ -193,9 +195,6 @@ public class MySqlEducationStorage implements EducationStorage {
     public void insert(List<Education> educations, int citizenId) throws DALException {
         try {
             if(!(educations.isEmpty())){
-//                for (Education education : educations){
-//                    System.out.println(education.getInstitutionName() + " " + education.getEnrollmentDate() +" " + education.getGraduationDate() + " " + education.getDegree() + " " + education.isGraduated());
-//                }
             Statement statement = con.createStatement();
             StringBuilder query = new StringBuilder().append(" INSERT INTO `Education` ( `institutionName`, `enrollmentDate`, `graduationDate`, `degree`, `graduaded`,  `grade`, `citizen_id`)  VALUES ");
             for (int i=0; i<educations.size();i++) {
@@ -208,14 +207,11 @@ public class MySqlEducationStorage implements EducationStorage {
                 if(educations.get(i) instanceof PrimaryEducation){
                 query.append("('").append(educations.get(i).getInstitutionName()).append("', '").append(educations.get(i).getEnrollmentDate()).append("', '").append(educations.get(i).getGraduationDate()).append("', '").append(educations.get(i).getDegree()).append("', ").append(isGraduated).append(", " + "NULL" + ", ").append(citizenId).append(") , ");
                 }else{
-//                       if ( ((GradedEducation) educations.get(i)).getFinalGrade() != null ) {
-//                       
-//                       }
+
                         query.append("('").append(educations.get(i).getInstitutionName()).append("', '").append(educations.get(i).getEnrollmentDate()).append("', '").append(educations.get(i).getGraduationDate()).append("', '").append(educations.get(i).getDegree()).append("', ").append(isGraduated).append(", ").append(((GradedEducation) educations.get(i)).getFinalGrade()).append(", ").append(citizenId).append(") , ");
                 }
             }
             query.setCharAt(query.lastIndexOf(","), ';');
-//            System.out.println(query.toString());
             statement.execute(query.toString());
         }
         } catch (SQLException e) {

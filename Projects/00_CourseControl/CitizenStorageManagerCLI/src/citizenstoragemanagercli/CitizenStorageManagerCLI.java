@@ -1,6 +1,8 @@
 package citizenstoragemanagercli;
 
 import address.Address;
+import education.Education;
+import education.GradedEducation;
 import insurance.SocialInsuranceRecord;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -131,7 +133,8 @@ public class CitizenStorageManagerCLI {
                             citizen.addEducation(createEducation(institutionName, enrollmentDate, graduationDate, degree, grade));//createEducation is defined in MySQLEducationStorage
                         }
                     } else // there are no more education to be added, the current is the last
-                     if (14 + (j + 1) == split.length) {
+                    {
+                        if (14 + (j + 1) == split.length) {
                             // grade exists and we will parse it 
                             grade = Float.parseFloat(split[14 + (j++)].trim());
                             citizen.addEducation(createEducation(institutionName, enrollmentDate, graduationDate, degree, grade)); //createEducation is defined in MySQLEducationStorage
@@ -141,6 +144,7 @@ public class CitizenStorageManagerCLI {
                             citizen.addEducation(createEducation(institutionName, enrollmentDate, graduationDate, degree, grade));//createEducation is defined in MySQLEducationStorage
                             break;
                         }
+                    }
 
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     storageEducation.truncateEducationTable();
@@ -173,5 +177,28 @@ public class CitizenStorageManagerCLI {
             storageSocialInsurance.insert(citizens.get(i).getSocialInsuranceRecords(), i + 1);
 
         }
+
+        Address address
+                = storageAddress.getAddressById(1);
+        Citizen citizen
+                = storageCitizen.getCitizenById(1);
+        List<Education> educations = new ArrayList<>();
+            educations = storageEducation.getEducationById(2);
+//        System.out.println(address.getCountry() + " " + address.getCity() + " " + address.getMunicipality() + " " +address);
+        System.out.println(citizen.toString());
+        System.out.println(address.toString());
+        System.out.println();
+        for(Education e : educations){
+            String result =String.format("%-30s %-14s %-14s %-10s %-6s",e.getInstitutionName(), e.getEnrollmentDate(),e.getGraduationDate(), 
+            e.getDegree(), e.isGraduated());
+            if(e instanceof GradedEducation){
+            result+=String.format(" %.3f %n",((GradedEducation)e).getFinalGrade());
+            }
+            else{
+            result+=String.format("%n");
+            }
+            System.out.print(result);
+        }
+
     }
 }

@@ -221,5 +221,17 @@ public final class Citizen {
             }
         }
     }
+    
+    @Override
+    public String toString() {
+        String result = String.format("%s %s %s, родена на:%s, пол:%s %n",_firstName ,_middleName, _lastName, _dateOfBirth, _gender );
+//        if (_floor != null && _apartmentNo != null) {
+//            result += String.format("fl. %d, ap. %d%n", _floor, _apartmentNo);
+//        }
+//        result += String.format("%s %s%n", _postalCode, _municipality);
+//        result += String.format("%s, %s", _city, _country);
+
+        return result;
+    }
 
 }

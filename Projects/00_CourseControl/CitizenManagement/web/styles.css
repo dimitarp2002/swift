@@ -1,0 +1,27 @@
+body {
+	background-color: #E6E6FA;
+}
+
+table {
+    border: 0; 
+    cellspacing: 1; 
+    width:   50%; 
+    bgcolor: #000000;
+}
+
+th { bgcolor: #F5E8FF;
+     colspan: 6;
+}
+
+tr {
+    bgcolor: #F5E8FF;
+}
+
+td{width:35%;
+}
+
+
+ol#advantages-list {
+    font-style: italic;
+}
+

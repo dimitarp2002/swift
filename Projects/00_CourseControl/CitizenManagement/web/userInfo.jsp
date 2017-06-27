@@ -4,6 +4,8 @@
     Author     : dimitar
 --%>
 
+<%@page import="businessmanagers.BusinessManagerCitizen"%>
+<%@page import="businessmanagers.*"%>
 <%@page import="education.GradedEducation"%>
 <%@page import="education.Education"%>
 <%@page import="java.util.List"%>
@@ -19,48 +21,28 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
+        
     </head>
     <body bgcolor="#E6E6FA">
-        <h1>WELCOME TO CITIZEN STORAGE MANAGER!</h1>
+        <h1>WELCOME TO CITIZEN MANAGER!</h1>
         
         <%
             Class.forName("com.mysql.jdbc.Driver");
         %>
 
         <%
-            String url = "jdbc:mysql://localhost:3306/Citizen_and_SI_db?useSSL=false&useUnicode=true&characterEncoding=UTF-8";
-            String username = "dimitar";
-            String password = "123456";
+            BusinessManagerCitizen BMC = new MyBusinessManagerCitizen();
+            BusinessManagerAddress BMA = new MyBusinessManagerAddress();
+            BusinessManagerEducation BME = new MyBusinessManagerEducation();
+//            BusinessManagerSIRecords BMS = new MyBusinessManagerSIRecords();
+            
             String citizenId = request.getParameter("citizenId");
-
-            CitizenStorage storageCitizen;
-            AddressStorage storageAddress;
-            EducationStorage storageEducation;
-            SocialInsuranceStorage storageSocialInsurance;
-
-            try {
-                storageCitizen = new MySqlCitizenStorage(url, username, password);
-                storageAddress = new MySqlAddressStorage(url, username, password);
-                storageEducation = new MySqlEducationStorage(url, username, password);
-                storageSocialInsurance = new MySqlSocialInsuranceStorage(url, username, password);
-
-            } catch (SQLException ex) {
-                throw new DALException("Unable to open storage", ex);
-            }
-
-            Citizen citizen = null;
-            Address address = null;
-            List<Education> educations = new ArrayList<>();
-
-            int receivedId = 0;
-            if (citizenId != null) {
-                receivedId = Integer.parseInt(citizenId);
-                citizen = storageCitizen.getCitizenById(receivedId);
-                address = storageAddress.getAddressById(receivedId);
-                educations = storageEducation.getEducationById(receivedId);
-            } else {
-
-            }
+            String isEligible = request.getParameter("isEligiblebutton");
+            
+            Citizen citizen = BMC.getCitizen(citizenId);
+            Address address = BMA.getAddress(citizenId);
+            List<Education> educations = BME.getEducations(citizenId);
+            
 
         %>
         <%  if (citizen != null) {%>
@@ -72,6 +54,17 @@
         <div>Адрес:</div>
         <div><%= address.toString()%> </div>
         <br>
+        
+        <% if (isEligible !=null) {%>
+       
+        <form name="toHome" action="userInfo.jsp" method="POST">
+            <input type="submit" value="Home" name="toHomeButton" />
+        </form>
+        <br>
+        
+        <% } %> 
+        
+        
         <table border="0" cellspacing="1" width="50%" bgcolor="#000000">  
             <th bgcolor="#F5E8FF" colspan="6">
                 Образования:
@@ -149,7 +142,7 @@
                                    value="<%=request.getParameter("citizenId")%>" />
                         </form>
                     </td>
-
+                    <% if (isEligible == null) { %>
                     <td style="width:34%">
                         <form name="newEdu" action="userInfo.jsp">
                             <input type="submit" value="isEligible" name="isEligiblebutton" />
@@ -157,14 +150,20 @@
                                    value="<%=request.getParameter("citizenId")%>" />
                         </form>
                     </td>
+                    <% }else { %>
+                    <td>
+                        <%=  String.format("%s", BMC.isEligible(citizenId))   %>
+                    </td>
+                    
+                    <% }%>
                 </tr>
             </tbody>
         </table>
         <% } else { %>
 
-        <h1>Searching People in DB!</h1>
+        <h1>Search People in the DB </h1>
         <form name="search_form" action="userInfo.jsp">
-            <input type="text" placeholder="insert your name" name="citizenId" value=""/>
+            <input type="text" placeholder="insert citizen id" name="citizenId" value=""/>
             <input type="submit" value="OK" name="submit" />
         </form>
         <% } %>

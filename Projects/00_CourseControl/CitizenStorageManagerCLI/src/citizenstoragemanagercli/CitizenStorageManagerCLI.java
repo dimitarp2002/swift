@@ -178,27 +178,7 @@ public class CitizenStorageManagerCLI {
 
         }
 
-        Address address
-                = storageAddress.getAddressById(1);
-        Citizen citizen
-                = storageCitizen.getCitizenById(1);
-        List<Education> educations = new ArrayList<>();
-            educations = storageEducation.getEducationById(2);
-//        System.out.println(address.getCountry() + " " + address.getCity() + " " + address.getMunicipality() + " " +address);
-        System.out.println(citizen.toString());
-        System.out.println(address.toString());
-        System.out.println();
-        for(Education e : educations){
-            String result =String.format("%-30s %-14s %-14s %-10s %-6s",e.getInstitutionName(), e.getEnrollmentDate(),e.getGraduationDate(), 
-            e.getDegree(), e.isGraduated());
-            if(e instanceof GradedEducation){
-            result+=String.format(" %.3f %n",((GradedEducation)e).getFinalGrade());
-            }
-            else{
-            result+=String.format("%n");
-            }
-            System.out.print(result);
-        }
+
 
     }
 }

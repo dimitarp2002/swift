@@ -108,7 +108,7 @@
                     <td style="width:10%">
                         <%= String.format("%s", e.isGraduated())%>
                     </td>
-                    <% if (e instanceof GradedEducation) {%>
+                    <% if (e instanceof GradedEducation && e.isGraduated()) {%>
                     <td style="width:10%">
                         <%= String.format("%s", ((GradedEducation) e).getFinalGrade())%>
                     </td>

@@ -9,10 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.time.LocalDate;
-import java.util.List;
-import personaldetails.Citizen;
-import personaldetails.Gender;
 
 public class MySqlAddressStorage implements AddressStorage {
 

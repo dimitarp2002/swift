@@ -157,7 +157,7 @@ public class MySqlEducationStorage implements EducationStorage {
             case "Doctorate":
             case "D":
                 HigherEducation eduDoctorate
-                        = new HigherEducation(institutionName, enrollmentDate, graduationDate, EducationDegree.Bachelor);
+                        = new HigherEducation(institutionName, enrollmentDate, graduationDate, EducationDegree.Doctorate);
                 eduDoctorate.gotGraduated(grade);
                 result = eduDoctorate;
                 break;

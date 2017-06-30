@@ -224,7 +224,19 @@ public final class Citizen {
     
     @Override
     public String toString() {
-        String result = String.format("%s %s %s, родена на:%s, пол:%s %n",_firstName ,_middleName, _lastName, _dateOfBirth, _gender );
+        
+        String heOrShe;
+        String heOrSheGender;
+
+        if (_gender == Gender.Male) {
+            heOrShe = "роден на:";
+            heOrSheGender = "мъж";
+        } else {
+            heOrShe = "родена на:";
+            heOrSheGender = "жена";
+        }
+        
+        String result = String.format("%s %s %s, %s%s, %s %n",_firstName ,_middleName, _lastName, heOrShe, _dateOfBirth, heOrSheGender );
 //        if (_floor != null && _apartmentNo != null) {
 //            result += String.format("fl. %d, ap. %d%n", _floor, _apartmentNo);
 //        }

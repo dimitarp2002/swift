@@ -55,11 +55,11 @@ public class Address {
 
     @Override
     public String toString() {
-        String result = String.format("%s %s Street%n", _number, _street);
+        String result = String.format("%s %s %n",  _street, _number);
         if (_floor != null && _apartmentNo != null) {
-            result += String.format("fl. %d, ap. %d%n", _floor, _apartmentNo);
+            result += String.format("ет. %d, ап. %d%n", _floor, _apartmentNo);
         }
-        result += String.format("%s %s%n", _postalCode, _municipality);
+        result += String.format("п.к %s %s%n", _postalCode, _municipality);
         result += String.format("%s, %s", _city, _country);
 
         return result;

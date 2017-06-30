@@ -2,7 +2,7 @@ package education;
 
 import java.time.LocalDate;
 
-public abstract class Education{
+public abstract class Education {
 
     boolean graduated;
     private final LocalDate enrollmentDate;
@@ -40,13 +40,33 @@ public abstract class Education{
         return institutionName;
     }
 
+    public void setGraduated(boolean graduated) {
+        this.graduated = graduated;
+    }
+
     void gotGraduated() {
         if (graduationDate.isAfter(LocalDate.now())) {
-//            throw new IllegalArgumentException("Graduation date is expected to be a date in the past.");
-            graduated = false;
-        }else{
-
-        graduated = true;
+            throw new IllegalArgumentException("Graduation date is expected to be a date in the past.");
         }
+        graduated = true;
+
+    }
+
+    public String degreeToCyrilic() {
+        String result = null;
+        switch (this.getDegree()) {
+            case Primary: result = "Начално";
+                break;
+            case Secondary: result = "Средно";
+                break;
+            case Bachelor: result = "Бакалавър";
+                break;
+            case Master: result = "Магистър";
+                break;
+            case Doctorate: result = "Докторант";
+                break;
+
+        }
+        return result;
     }
 }

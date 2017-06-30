@@ -12,6 +12,8 @@ public abstract class GradedEducation extends Education{
     public Float getFinalGrade(){
         if(isGraduated()){
             return finalGrade;    
+        }else if (finalGrade == null){
+        return finalGrade;
         }
         
         throw new IllegalStateException("No final grade can be provided before graduation.");
@@ -19,10 +21,11 @@ public abstract class GradedEducation extends Education{
     
     public void gotGraduated(Float finalGrade){
         
-//        if( ! ( 2 <= finalGrade && finalGrade <= 6) ) {
-//            throw new IllegalArgumentException("Graduation grade is expected to be between 2 and 6.");
-//        }
-        
+        if( finalGrade != null){
+        if( ! ( 2 <= finalGrade && finalGrade <= 6) ) {
+            throw new IllegalArgumentException("Graduation grade is expected to be between 2 and 6.");
+        }
+        }
         gotGraduated();
         
         this.finalGrade = finalGrade;

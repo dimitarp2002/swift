@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import static storages.CreateEducation.createEducation;
 import storages.DALException;
 import storages.EducationStorage;
 import storages.MySqlEducationStorage;
@@ -48,45 +49,56 @@ public class MyBusinessManagerEducation implements BusinessManagerEducation {
 
     @Override
     public void insertEducation(String institutionName, String enrollmentDate,
-            String graduationDate, String degree, String isGraduated, String grade, String citizenId) throws DALException{
+            String graduationDate, String degree, String grade, String citizenId) throws DALException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d");
         LocalDate enrlDate;
         LocalDate gradDate;
-        try{
-        enrlDate = LocalDate.parse(enrollmentDate, formatter);
-        gradDate = LocalDate.parse(graduationDate, formatter);
-        }catch(DateTimeParseException ex){
-        throw new DALException("Not correct format for Date. It should be yyyy-M-d", ex);
+        try {
+            enrlDate = LocalDate.parse(enrollmentDate, formatter);
+            gradDate = LocalDate.parse(graduationDate, formatter);
+        } catch (DateTimeParseException ex) {
+            throw new DALException("Not correct format for Date. It should be yyyy-M-d", ex);
         }
-        Float grde=null;
-        if(grade.isEmpty()){
+        Float _grde = null;
+        if (grade.isEmpty()) {
             grade = null;
         }
-        try{
-            if (grade != null){
-        grde = Float.parseFloat(grade);
-        if(grde<3 || grde>6){
-            throw new NumberFormatException("The grade should be between 3 and 6");
-        }
+        try {
+            if (grade != null) {
+                _grde = Float.parseFloat(grade);
+                if (_grde < 3 || _grde > 6) {
+                    throw new NumberFormatException("The grade should be between 3 and 6");
+                }
             }
-        }catch(NumberFormatException ex){
-            throw  new DALException("Not correct format for Float grade ", ex);
+        } catch (NumberFormatException ex) {
+            throw new DALException("Not correct format for Float grade ", ex);
         }
+        if(degree.equalsIgnoreCase("начално")){
+            degree = "P"; }
+        if(degree.equalsIgnoreCase("средно")){
+            degree = "S"; }
+        if(degree.equalsIgnoreCase("бакалавър")){
+            degree = "B"; }
+        if(degree.equalsIgnoreCase("магистър")){
+            degree = "M"; }
+        if(degree.equalsIgnoreCase("докторант")){
+            degree = "D"; }
         
-        if(!(degree.equalsIgnoreCase("P") || degree.equalsIgnoreCase("S")   ||  degree.equalsIgnoreCase("B")  ||  
-                degree.equalsIgnoreCase("M")  ||  degree.equalsIgnoreCase("D")   
-                || degree.equalsIgnoreCase("Primary")  ||   degree.equalsIgnoreCase("Secondary") || degree.equalsIgnoreCase("Bachelor")   || 
-                degree.equalsIgnoreCase("Master")  ||    degree.equalsIgnoreCase("Doctorate"))){
-        
-        throw new DALException("Not correct value for degree. It can be only one of these: "
-                + " Primary, Secondary, Bachelor, Master or Doctorate");
+        if (!(degree.equalsIgnoreCase("P") || degree.equalsIgnoreCase("S") || degree.equalsIgnoreCase("B")
+                || degree.equalsIgnoreCase("M") || degree.equalsIgnoreCase("D")
+                || degree.equalsIgnoreCase("Primary") || degree.equalsIgnoreCase("Secondary") || degree.equalsIgnoreCase("Bachelor")
+                || degree.equalsIgnoreCase("Master") || degree.equalsIgnoreCase("Doctorate"))) {
+
+            throw new DALException("Not correct value for degree. It can be only one of these: "
+                    + " P, S, B, M or D.  Или : начално, средно, магистър, бакалавър, докторант");
         }
-        
-        Education education = MySqlEducationStorage.createEducation(institutionName, enrlDate, gradDate, degree, grde);
-         if (citizenId != null) {
-             int receivedId = Integer.parseInt(citizenId);
-        storageEducation.insert(education, receivedId );
-         }
+
+        Education education = createEducation(institutionName, enrlDate, gradDate, degree, _grde);
+
+        if (citizenId != null) {
+            int receivedId = Integer.parseInt(citizenId);
+            storageEducation.insert(education, receivedId);
+        }
     }
 
 }

@@ -84,10 +84,10 @@
                         Степен
                     </td>
                     <td style="width:10%">
-                        Завършено
+                        Оценка
                     </td>
                     <td style="width:10%">
-                        Оценка
+                        Завършено
                     </td>
                 </tr>
                 <% for (Education e : educations) {%>
@@ -103,10 +103,7 @@
                         <%= String.format("%s", e.getGraduationDate())%>
                     </td>
                     <td style="width:15%">
-                        <%= String.format("%s", e.getDegree())%>
-                    </td>
-                    <td style="width:10%">
-                        <%= String.format("%s", e.isGraduated())%>
+                        <%= String.format("%s", e.degreeToCyrilic())%>
                     </td>
                     <% if (e instanceof GradedEducation && e.isGraduated()) {%>
                     <td style="width:10%">
@@ -117,6 +114,21 @@
                         <%= String.format("  ")%>
                     </td>
                     <% } %>
+                    <% if(e.isGraduated()) { %>
+                    <td style="width:10%">
+                        <font color="green">
+                        Да
+                        </font>
+                    </td>
+                    <% } else { %>
+                    <td style="width:10%">
+                        <font color="red">
+                        Не
+                        </font>
+                    </td>
+                    
+                    <% } %>
+                    
                 </tr>
 
                 <% }%>

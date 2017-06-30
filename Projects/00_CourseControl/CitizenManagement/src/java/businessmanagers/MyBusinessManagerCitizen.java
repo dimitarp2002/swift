@@ -47,7 +47,7 @@ public class MyBusinessManagerCitizen implements BusinessManagerCitizen {
 
     @Override
     public String isEligible(String citizenId) throws DALException {
-        String result = "Not Eligible for Social Payments";
+        String result = "няма право на социална помощ";
         boolean isEducationApt = false;
         List<Education> educations = BME.getEducations(citizenId);
         for (int i = 0; i < educations.size(); i++) {
@@ -91,7 +91,7 @@ public class MyBusinessManagerCitizen implements BusinessManagerCitizen {
                     }
 
                 }
-                result = String.format("Eligible for social payments with deserved salary %.2f %n", sum / 24);
+                result = String.format("Има право на соц. помощ в размер на  %.2f %n", sum / 24);
             }
 
         }

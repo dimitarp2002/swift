@@ -32,12 +32,11 @@
             String enrollmentDate = request.getParameter("enrollmentDate");
             String graduationDate = request.getParameter("graduationDate");
             String degree = request.getParameter("degree");
-            String isGraduated = request.getParameter("isGraduated");
             String grade = request.getParameter("grade");
             
             if ( institutionName != null && enrollmentDate != null && graduationDate != null 
-                    && degree != null && isGraduated!= null){
-                    BME.insertEducation(institutionName, enrollmentDate, graduationDate, degree, isGraduated, grade, citizenId );
+                    && degree != null ){
+                    BME.insertEducation(institutionName, enrollmentDate, graduationDate, degree, grade, citizenId );
             }
             
             Citizen citizen = BMC.getCitizen(citizenId);
@@ -83,10 +82,10 @@
                         Степен
                     </td>
                     <td style="width:10%">
-                        Завършено
+                        Оценка
                     </td>
                     <td style="width:10%">
-                        Оценка
+                        Завършено
                     </td>
                 </tr>
                 <% for (Education e : educations) {%>
@@ -102,11 +101,9 @@
                         <%= String.format("%s", e.getGraduationDate())%>
                     </td>
                     <td style="width:15%">
-                        <%= String.format("%s", e.getDegree())%>
+                        <%= String.format("%s", e.degreeToCyrilic())%>
                     </td>
-                    <td style="width:10%">
-                        <%= String.format("%s", e.isGraduated())%>
-                    </td>
+                   
                     <% if (e instanceof GradedEducation && e.isGraduated()) {%>
                     <td style="width:10%">
                         <%= String.format("%s", ((GradedEducation) e).getFinalGrade())%>
@@ -116,6 +113,20 @@
                         <%= String.format("  ")%>
                     </td>
                     <% } %>
+                     <% if(e.isGraduated()) { %>
+                    <td style="width:10%">
+                        <font color="green">
+                        Да
+                        </font>
+                    </td>
+                    <% } else { %>
+                    <td style="width:10%">
+                        <font color="red">
+                        Не
+                        </font>
+                    </td>
+                    
+                    <% } %>
                 </tr>
 
                 <% }%>
@@ -123,7 +134,7 @@
         </table>
         <br>
         <form name="insertNewEducation" action="newEducation.jsp" method="POST"  >
-            <table border="0" cellspacing="1" width="50%" >
+            <table border="0" cellspacing="1" width="40%" >
                 <tbody>
                     <tr>
                         <td align="center">
@@ -137,9 +148,6 @@
                         </td>
                         <td align="center">
                             Степен
-                        </td>
-                        <td align="center">
-                            Завършено
                         </td>
                         <td align="center">
                             Оценка
@@ -157,9 +165,6 @@
                         </td>
                         <td align="center">
                             <input type="text" name="degree" value=""  maxlength="10" size="10"/>
-                        </td>
-                        <td align="center">
-                            <input type="text" name="isGraduated" value=""  maxlength="5" size="6"/>
                         </td>
                         <td align="center">
                             <input type="text" name="grade" value=""  maxlength="5" size="5"/>

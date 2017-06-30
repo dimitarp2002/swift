@@ -191,7 +191,6 @@ public class MySqlEducationStorage implements EducationStorage {
             int counter =1;
             StringBuilder query = new StringBuilder().append("INSERT INTO Education (institutionName, enrollmentDate, graduationDate, degree, graduaded, grade, citizen_id) VALUES ");
             for (int i=0; i<citizens.size();i++) {
-                System.out.println(i);
                 List<Education> educations = citizens.get(i).getEducations();
                  for (int j=0;j<educations.size();j++){
                      int isGraduated;

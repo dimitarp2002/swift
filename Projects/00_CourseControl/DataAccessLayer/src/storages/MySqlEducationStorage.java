@@ -1,11 +1,8 @@
 package storages;
 
 import education.Education;
-import education.EducationDegree;
 import education.GradedEducation;
-import education.HigherEducation;
 import education.PrimaryEducation;
-import education.SecondaryEducation;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
@@ -18,20 +15,20 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import personaldetails.Citizen;
+import static storages.CreateEducation.createEducation;
 
 public class MySqlEducationStorage implements EducationStorage {
 
     private final String url;
     private final String username;
     private final String password;
- 
 
     public MySqlEducationStorage(String url, String username, String password) throws SQLException {
         this.url = url;
         this.username = username;
         this.password = password;
-        
-        
+
     }
 
     @Override
@@ -68,10 +65,11 @@ public class MySqlEducationStorage implements EducationStorage {
 
             if (education instanceof PrimaryEducation) {
                 statement.setNull("p_grade", Types.DOUBLE);
+            } else if (((GradedEducation) education).getFinalGrade() == null) {
+                statement.setNull("p_grade", Types.DOUBLE);
             } else {
                 statement.setFloat("p_grade", ((GradedEducation) education).getFinalGrade());
             }
-
             statement.setInt("p_citizen_id", citizenId);
             statement.executeQuery();
         } catch (SQLException ex) {
@@ -109,8 +107,11 @@ public class MySqlEducationStorage implements EducationStorage {
                     LocalDate graduationDate = rs.getDate("graduationDate").toLocalDate();
                     String degree = rs.getString("degree");
                     boolean graduaded = rs.getBoolean("graduaded");
-                    float grade = rs.getFloat("grade");
-
+                    Float grade = rs.getFloat("grade");
+                    if (grade == 0.0) {
+                        grade = null;
+                    }
+                    System.out.println(grade);
                     result.add(createEducation(institutionName, enrollmentDate, graduationDate, degree, grade));
                 }
             }
@@ -120,49 +121,6 @@ public class MySqlEducationStorage implements EducationStorage {
         }
         return result;
 
-    }
-
-    public static Education createEducation(String institutionName, LocalDate enrollmentDate,
-            LocalDate graduationDate, String degree, Float grade) {
-
-        Education result = null;
-        switch (degree) {
-            case "Primary":
-            case "P":
-                PrimaryEducation eduPrimary = new PrimaryEducation(institutionName, enrollmentDate, graduationDate);
-                eduPrimary.gotGraduated();
-                result = eduPrimary;
-                break;
-            case "Secondary":
-            case "S":
-                SecondaryEducation eduSecondary
-                        = new SecondaryEducation(institutionName, enrollmentDate, graduationDate);
-                eduSecondary.gotGraduated(grade);
-                result = eduSecondary;
-                break;
-            case "Bachelor":
-            case "B":
-                HigherEducation eduBachelor
-                        = new HigherEducation(institutionName, enrollmentDate, graduationDate, EducationDegree.Bachelor);
-                eduBachelor.gotGraduated(grade);
-                result = eduBachelor;
-                break;
-            case "Master":
-            case "M":
-                HigherEducation eduMaster
-                        = new HigherEducation(institutionName, enrollmentDate, graduationDate, EducationDegree.Master);
-                eduMaster.gotGraduated(grade);
-                result = eduMaster;
-                break;
-            case "Doctorate":
-            case "D":
-                HigherEducation eduDoctorate
-                        = new HigherEducation(institutionName, enrollmentDate, graduationDate, EducationDegree.Doctorate);
-                eduDoctorate.gotGraduated(grade);
-                result = eduDoctorate;
-                break;
-        }
-        return result;
     }
 
     @Override
@@ -196,30 +154,68 @@ public class MySqlEducationStorage implements EducationStorage {
     public void insert(List<Education> educations, int citizenId) throws DALException {
         try (Connection con = DriverManager.getConnection(url, username, password);
                 Statement statement = con.createStatement();) {
-            if(!(educations.isEmpty())){
-            
-            StringBuilder query = new StringBuilder().append(" INSERT INTO `Education` ( `institutionName`, `enrollmentDate`, `graduationDate`, `degree`, `graduaded`,  `grade`, `citizen_id`)  VALUES ");
-            for (int i=0; i<educations.size();i++) {
-                int isGraduated;
-                if(educations.get(i).isGraduated()){
-                isGraduated = 1;
-                }else{
-                isGraduated = 0;
-                }
-                if(educations.get(i) instanceof PrimaryEducation){
-                query.append("('").append(educations.get(i).getInstitutionName()).append("', '").append(educations.get(i).getEnrollmentDate()).append("', '").append(educations.get(i).getGraduationDate()).append("', '").append(educations.get(i).getDegree()).append("', ").append(isGraduated).append(", " + "NULL" + ", ").append(citizenId).append(") , ");
-                }else{
+            if (!(educations.isEmpty())) {
+
+                StringBuilder query = new StringBuilder().append(" INSERT INTO `Education` ( `institutionName`, `enrollmentDate`, `graduationDate`, `degree`, `graduaded`,  `grade`, `citizen_id`)  VALUES ");
+                for (int i = 0; i < educations.size(); i++) {
+                    int isGraduated;
+                    if (educations.get(i).isGraduated()) {
+                        isGraduated = 1;
+                    } else {
+                        isGraduated = 0;
+                    }
+                    if (educations.get(i) instanceof PrimaryEducation) {
+                        query.append("('").append(educations.get(i).getInstitutionName()).append("', '").append(educations.get(i).getEnrollmentDate()).append("', '").append(educations.get(i).getGraduationDate()).append("', '").append(educations.get(i).getDegree()).append("', ").append(isGraduated).append(", " + "NULL" + ", ").append(citizenId).append(") , ");
+                    } else {
 
                         query.append("('").append(educations.get(i).getInstitutionName()).append("', '").append(educations.get(i).getEnrollmentDate()).append("', '").append(educations.get(i).getGraduationDate()).append("', '").append(educations.get(i).getDegree()).append("', ").append(isGraduated).append(", ").append(((GradedEducation) educations.get(i)).getFinalGrade()).append(", ").append(citizenId).append(") , ");
+                    }
                 }
+                query.setCharAt(query.lastIndexOf(","), ';');
+                statement.execute(query.toString());
             }
-            query.setCharAt(query.lastIndexOf(","), ';');
-            statement.execute(query.toString());
-        }
         } catch (SQLException e) {
             throw new DALException("Unable to insert Education", e);
         }
 
     }
+    
+    @Override
+            public void insertEducations(List<Citizen> citizens) throws DALException {
+         try (Connection con = DriverManager.getConnection(this.url, this.username, this.password);
+                Statement statement = con.createStatement(); ){
+            
+            StringBuilder query = new StringBuilder().append("INSERT INTO Education (institutionName, enrollmentDate, graduationDate, degree, graduaded, grade, citizen_id) VALUES ");
+            for (int i=0; i<citizens.size();i++) {
+                List<Education> educations = citizens.get(i).getEducations();
+                 for (int j=0;j<educations.size();j++){
+                     int isGraduated;
+                    if (educations.get(j).isGraduated()) {
+                        isGraduated = 1;
+                    } else {
+                        isGraduated = 0;
+                    }
+                    String gradeInSQLtable = "NULL";
+                     if (!(educations.get(j) instanceof PrimaryEducation)) {
+                         if(!(((GradedEducation)educations.get(j)).getFinalGrade()==null)){
+                        gradeInSQLtable= ((GradedEducation)educations.get(j)).getFinalGrade().toString();
+                         }
+                    }
+                    
+                query.append("\n('"+ educations.get(j).getInstitutionName() +  "', '" + educations.get(j).getEnrollmentDate() + "', '" + educations.get(j).getGraduationDate() + "', '"+ educations.get(j).getDegree() + "', " + isGraduated + ", " + gradeInSQLtable + ", " +(i+1) +  " ), ");
+            }
+            }
+            query.setCharAt(query.lastIndexOf(","), ';');
+            statement.execute(query.toString());
+            
+            
+        } catch (SQLException e) {
+            throw new DALException("Unable to insert Citizen",e);
+        }
+        
+    }
+    
+    
+    
 
 }

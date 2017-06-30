@@ -163,7 +163,7 @@ public class MySqlCitizenStorage implements CitizenStorage {
             
             StringBuilder query = new StringBuilder().append("INSERT INTO Citizen (id, firstName, middleName, lastName, gender, height, dateOfBirth) VALUES ");
             for (int i=0; i<citizens.size();i++) {
-                query.append("\n("+ (i+1) + ", '"+ citizens.get(i).getFirstName() +  "', '" + citizens.get(i).getMiddleName() + "', '" + citizens.get(i).getLastName() + "', '"+citizens.get(i).getGender() + "', " + citizens.get(i).getHeight() + ", '"+citizens.get(i).getDateOfBirth() + "' ), ");
+                query.append("\n(").append(i+1).append(", '").append(citizens.get(i).getFirstName()).append("', '").append(citizens.get(i).getMiddleName()).append("', '").append(citizens.get(i).getLastName()).append("', '").append(citizens.get(i).getGender()).append("', ").append(citizens.get(i).getHeight()).append(", '").append(citizens.get(i).getDateOfBirth()).append("' ), ");
             }
             query.setCharAt(query.lastIndexOf(","), ';');
             statement.execute(query.toString());

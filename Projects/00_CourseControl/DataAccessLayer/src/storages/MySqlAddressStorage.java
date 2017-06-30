@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.List;
+import personaldetails.Citizen;
 
 public class MySqlAddressStorage implements AddressStorage {
 
@@ -85,8 +87,13 @@ public class MySqlAddressStorage implements AddressStorage {
                     String street = rs.getString("street");
                     String number = rs.getString("number");
                     Integer floor = rs.getInt("floor");
+                    if(floor==0){
+                    floor=null;
+                    }
                     Integer appNo = rs.getInt("app_no");
-                    
+                    if(appNo==0){
+                    appNo=null;
+                    }
                     
                     result = new Address(country, city, municipality, postCode, street, number, floor, appNo);
 
@@ -150,6 +157,27 @@ public class MySqlAddressStorage implements AddressStorage {
             throw new DALException("Unable to insert Citizen", ex);
         }
     
+    }
+        
+        
+    @Override
+            public void insertAddresses(List<Citizen> citizens) throws DALException {
+         try (Connection con = DriverManager.getConnection(this.url, this.username, this.password);
+                Statement statement = con.createStatement(); ){
+            
+            StringBuilder query = new StringBuilder().append("INSERT INTO Addresses (country, city, municipality, postCode, street, number, floor, app_no, citizen_id) VALUES ");
+            for (int i=0; i<citizens.size();i++) {
+                Address address = citizens.get(i).getAddress();
+                query.append("\n('"+ address.getCountry() +  "', '" + address.getCity() + "', '" + address.getMunicipality() + "', '"+address.getPostalCode() + "', '" + address.getStreet() + "', '" + address.getNumber() + "', "+ address.getFloor() + ", "+address.getApartmentNo() + ", "+ (i+1) + " ), ");
+            }
+            query.setCharAt(query.lastIndexOf(","), ';');
+            statement.execute(query.toString());
+            
+            
+        } catch (SQLException e) {
+            throw new DALException("Unable to insert Citizen",e);
+        }
+        
     }
 
 }

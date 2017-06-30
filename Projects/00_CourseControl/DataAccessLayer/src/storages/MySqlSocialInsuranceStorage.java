@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import personaldetails.Citizen;
 
 public class MySqlSocialInsuranceStorage implements SocialInsuranceStorage {
 
@@ -150,6 +151,30 @@ public class MySqlSocialInsuranceStorage implements SocialInsuranceStorage {
         } catch (SQLException e) {
             throw new DALException("Unable to insert Citizen", e);
         }
+    }
+    
+    
+    @Override
+            public void insertSIRecords(List<Citizen> citizens) throws DALException {
+         try (Connection con = DriverManager.getConnection(this.url, this.username, this.password);
+                Statement statement = con.createStatement(); ){
+            
+            StringBuilder query = new StringBuilder().append("INSERT INTO SocialInsuransRecords (year, month, amount, citizen_id) VALUES ");
+            for (int i=0; i<citizens.size();i++) {
+                List <SocialInsuranceRecord> records = citizens.get(i).getSocialInsuranceRecords();
+                for (int j=0;j<records.size();j++){
+                    
+                query.append("\n("+ records.get(j).getYear() +  ", " + records.get(j).getMonth() + ", " + records.get(j).getAmount() + ", "+(i+1) +  " ), ");
+            }
+            }
+            query.setCharAt(query.lastIndexOf(","), ';');
+            statement.execute(query.toString());
+            
+            
+        } catch (SQLException e) {
+            throw new DALException("Unable to insert Citizen",e);
+        }
+        
     }
 
 }

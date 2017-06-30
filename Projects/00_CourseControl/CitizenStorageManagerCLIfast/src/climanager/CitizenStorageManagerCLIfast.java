@@ -73,11 +73,15 @@ public class CitizenStorageManagerCLIfast {
                 String[] split = line.split(";");
                 String floor = "\\N";
                 if (split.length > 12) {
+                    if(!split[12].isEmpty()){
                     floor = split[12].trim();
+                    }
                 }
                 String app_N = "\\N";
                 if (split.length >= 13) {
+                    if(!split[13].isEmpty()){
                     app_N = split[13];
+                    }
                 }
                 personW.printf("%d;%s;%s;%s;%s;%s;%s%n", i + 1, split[0], split[1], split[2], split[3], split[5], LocalDate.parse(split[4], formatter));
                 addressW.printf("%d;%s;%s;%s;%s;%s;%s;%s;%s;%d%n", addressId++, split[6], split[7], split[8], split[9], split[10], split[11], floor, app_N, i + 1);

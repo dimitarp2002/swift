@@ -1,8 +1,6 @@
 package citizenstoragemanagercli;
 
 import address.Address;
-import education.Education;
-import education.GradedEducation;
 import insurance.SocialInsuranceRecord;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,7 +13,7 @@ import java.util.Scanner;
 import personaldetails.Citizen;
 import personaldetails.Gender;
 import storages.*;
-import static storages.MySqlEducationStorage.createEducation;
+import static storages.CreateEducation.createEducation;
 
 public class CitizenStorageManagerCLI {
 
@@ -171,12 +169,15 @@ public class CitizenStorageManagerCLI {
         }
 
         storageCitizen.insert(citizens);
-        for (int i = 0; i < citizens.size(); i++) {
-            storageAddress.insert(citizens.get(i).getAddress(), i + 1);
-            storageEducation.insert(citizens.get(i).getEducations(), i + 1);
-            storageSocialInsurance.insert(citizens.get(i).getSocialInsuranceRecords(), i + 1);
+        storageAddress.insertAddresses(citizens);
+        storageEducation.insertEducations(citizens);
+        storageSocialInsurance.insertSIRecords(citizens);
+//        for (int i = 0; i < citizens.size(); i++) {
+//            storageAddress.insert(citizens.get(i).getAddress(), i + 1);
+//            storageEducation.insert(citizens.get(i).getEducations(), i + 1);
+//            storageSocialInsurance.insert(citizens.get(i).getSocialInsuranceRecords(), i + 1);
 
-        }
+//        }
 
 
 

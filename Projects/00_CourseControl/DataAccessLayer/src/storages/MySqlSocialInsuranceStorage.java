@@ -159,13 +159,25 @@ public class MySqlSocialInsuranceStorage implements SocialInsuranceStorage {
          try (Connection con = DriverManager.getConnection(this.url, this.username, this.password);
                 Statement statement = con.createStatement(); ){
             
+             int maxNumberOfSqlEntries = 500000;
+            int counter =1;
             StringBuilder query = new StringBuilder().append("INSERT INTO SocialInsuransRecords (year, month, amount, citizen_id) VALUES ");
             for (int i=0; i<citizens.size();i++) {
                 List <SocialInsuranceRecord> records = citizens.get(i).getSocialInsuranceRecords();
                 for (int j=0;j<records.size();j++){
                     
                 query.append("\n("+ records.get(j).getYear() +  ", " + records.get(j).getMonth() + ", " + records.get(j).getAmount() + ", "+(i+1) +  " ), ");
+                counter++;
+                }
+                
+                 if(counter>maxNumberOfSqlEntries){
+                 query.setCharAt(query.lastIndexOf(","), ';');
+                  statement.execute(query.toString());
+                  counter = 1;
+                  query.setLength(0);
+                  query.append("INSERT INTO SocialInsuransRecords (year, month, amount, citizen_id) VALUES ");
             }
+                
             }
             query.setCharAt(query.lastIndexOf(","), ';');
             statement.execute(query.toString());

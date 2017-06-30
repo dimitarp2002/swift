@@ -3,6 +3,9 @@ package storages;
 import education.Education;
 import education.GradedEducation;
 import education.PrimaryEducation;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
@@ -184,9 +187,11 @@ public class MySqlEducationStorage implements EducationStorage {
             public void insertEducations(List<Citizen> citizens) throws DALException {
          try (Connection con = DriverManager.getConnection(this.url, this.username, this.password);
                 Statement statement = con.createStatement(); ){
-            
+            int maxNumberOfSqlEntries = 120000;
+            int counter =1;
             StringBuilder query = new StringBuilder().append("INSERT INTO Education (institutionName, enrollmentDate, graduationDate, degree, graduaded, grade, citizen_id) VALUES ");
             for (int i=0; i<citizens.size();i++) {
+                System.out.println(i);
                 List<Education> educations = citizens.get(i).getEducations();
                  for (int j=0;j<educations.size();j++){
                      int isGraduated;
@@ -203,14 +208,30 @@ public class MySqlEducationStorage implements EducationStorage {
                     }
                     
                 query.append("\n('"+ educations.get(j).getInstitutionName() +  "', '" + educations.get(j).getEnrollmentDate() + "', '" + educations.get(j).getGraduationDate() + "', '"+ educations.get(j).getDegree() + "', " + isGraduated + ", " + gradeInSQLtable + ", " +(i+1) +  " ), ");
+                counter++;
             }
+                 if(counter>maxNumberOfSqlEntries){
+                 query.setCharAt(query.lastIndexOf(","), ';');
+                  statement.execute(query.toString());
+                  counter = 1;
+                  query.setLength(0);
+                  query.append("INSERT INTO Education (institutionName, enrollmentDate, graduationDate, degree, graduaded, grade, citizen_id) VALUES ");
+                  
+                 }
             }
             query.setCharAt(query.lastIndexOf(","), ';');
+//            PrintWriter personW=null;
+//            try{
+//            personW = new PrintWriter("/home/dimitar/Downloads/failed_bulk_insert.txt", "UTF-8");
+//            } catch (Exception exe ) {
+//                System.out.println("Bye");
+//            }
+//            personW.printf(query.toString());
             statement.execute(query.toString());
             
             
         } catch (SQLException e) {
-            throw new DALException("Unable to insert Citizen",e);
+            throw new DALException("Unable to insert Educations",e);
         }
         
     }
